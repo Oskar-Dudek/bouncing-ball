@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optional Growing Bouncing Ball</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #333;
+        }
+        #controls {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Controls for optional features -->
+    <div id="controls">
+        <label>
+            <input type="checkbox" id="growCheckbox">
+            Enable ball growth on bounce
+        </label>
+    </div>
+
+    <!-- Canvas for animation -->
+    <canvas id="canvas" width="500" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const growCheckbox = document.getElementById('growCheckbox');
+
+        // Ball properties as an object
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 20,
+            color: getRandomColor(),
+            dx: 2,       // Horizontal velocity
+            dy: 2,       // Vertical velocity
+            growthRate: 1.1, // Growth multiplier
+            maxSize: 100 // Maximum radius
+        };
+
+        // Function to generate a random color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Draw the ball
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // Update ball position and apply growth if enabled
+        function updateBall() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBall();
+
+            // Bounce off the walls and optionally increase size
+            if (ball.x + ball.radius >= canvas.width || ball.x - ball.radius <= 0) {
+                ball.dx = -ball.dx;
+                ball.color = getRandomColor();  // Change color on bounce
+
+                // Check if growth is enabled and apply if within maxSize
+                if (growCheckbox.checked && ball.radius < ball.maxSize) {
+                    ball.radius *= ball.growthRate; // Increase size
+                }
+                
+                // Keep the ball within bounds after growing
+                if (ball.x + ball.radius > canvas.width) ball.x = canvas.width - ball.radius;
+                if (ball.x - ball.radius < 0) ball.x = ball.radius;
+            }
+            if (ball.y + ball.radius >= canvas.height || ball.y - ball.radius <= 0) {
+                ball.dy = -ball.dy;
+                ball.color = getRandomColor();  // Change color on bounce
+
+                // Check if growth is enabled and apply if within maxSize
+                if (growCheckbox.checked && ball.radius < ball.maxSize) {
+                    ball.radius *= ball.growthRate; // Increase size
+                }
+
+                // Keep the ball within bounds after growing
+                if (ball.y + ball.radius > canvas.height) ball.y = canvas.height - ball.radius;
+                if (ball.y - ball.radius < 0) ball.y = ball.radius;
+            }
+
+            // Update position
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            requestAnimationFrame(updateBall);
+        }
+
+        // Start the animation
+        updateBall();
+    </script>
+</body>
+</html>
