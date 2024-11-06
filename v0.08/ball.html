@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Ball Animation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ball properties
+        let x = canvas.width / 2;
+        let y = canvas.height / 2;
+        let radius = 20;
+        let dx = 2;  // Horizontal velocity
+        let dy = 2;  // Vertical velocity
+
+        // Animate the ball
+        function drawBall() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            // Draw the ball
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#0095DD';
+            ctx.fill();
+            ctx.closePath();
+
+            // Bounce off the walls
+            if (x + radius > canvas.width || x - radius < 0) {
+                dx = -dx;
+            }
+            if (y + radius > canvas.height || y - radius < 0) {
+                dy = -dy;
+            }
+
+            // Update ball position
+            x += dx;
+            y += dy;
+
+            requestAnimationFrame(drawBall);  // Recursively call to animate
+        }
+
+        // Start the animation
+        drawBall();
+    </script>
+</body>
+</html>
